@@ -2,13 +2,18 @@ import Hero from '@/components/Hero';
 import FeaturedCategories from '@/components/FeaturedCategories';
 import ProductGrid from '@/components/ProductGrid';
 import { getProducts } from '@/lib/shopify';
+// Import ShopifyProduct type to type products array explicitly
+// Import the ShopifyProduct type from the shared types definition to match the
+// ProductGrid component's expectations (see components/ProductGrid.tsx).
+import type { ShopifyProduct } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 export const revalidate = 3600;
 
 export default async function Home() {
-  let products = [];
+  // Explicitly type the products array to avoid the implicit 'any' error in TypeScript strict mode
+  let products: { node: ShopifyProduct }[] = [];
 
   try {
     products = await getProducts();

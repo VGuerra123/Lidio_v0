@@ -1,11 +1,19 @@
 import { Badge } from '@/components/ui/badge';
 import ProductGrid from '@/components/ProductGrid';
+// Import the type for a Shopify product. This allows us to avoid implicit `any` types.
+// Import the ShopifyProduct type from the shared types definition. This ensures
+// compatibility with the ProductGrid component, which expects this type from
+// '@/lib/types'.
+import type { ShopifyProduct } from '@/lib/types';
 import { getProducts } from '@/lib/shopify';
 
 export const revalidate = 3600;
 
 export default async function OffersPage() {
-  let products = [];
+  // Declare the `products` array with an explicit type to avoid the
+  // `implicitly has type 'any'` TypeScript error. `getProducts()` returns
+  // an array of edges where each edge contains a Shopify product node.
+  let products: { node: ShopifyProduct }[] = [];
 
   try {
     products = await getProducts();
@@ -13,8 +21,10 @@ export default async function OffersPage() {
     console.error('Error fetching products:', error);
   }
 
-  const offerProducts = products.filter((p: any) =>
-    p.node.tags.some((tag: string) => tag.toLowerCase().includes('oferta') || tag.toLowerCase().includes('descuento'))
+  // Filter the products for those tagged as oferta or descuento. The optional chaining
+  // on `tags` ensures we don't read `.some` on undefined if a product lacks tags.
+  const offerProducts = products.filter(({ node }) =>
+    node.tags?.some((tag: string) => tag.toLowerCase().includes('oferta') || tag.toLowerCase().includes('descuento'))
   );
 
   return (
@@ -26,9 +36,7 @@ export default async function OffersPage() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <Badge className="bg-white text-blue-600 mb-4">Ofertas especiales</Badge>
-          <h1 className="text-4xl lg:text-5xl font-bold mb-4">
-            Descuentos increíbles
-          </h1>
+          <h1 className="text-4xl lg:text-5xl font-bold mb-4">Descuentos increíbles</h1>
           <p className="text-xl text-cyan-50">
             Aprovecha nuestras mejores ofertas en tecnología de última generación
           </p>
