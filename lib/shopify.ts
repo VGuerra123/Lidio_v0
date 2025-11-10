@@ -1,6 +1,15 @@
 // Shopify API client for Lidio (Next.js app)
 // This version adds runtime checks for required environment variables and clearer errors.
 
+// Import the shared types from '@/lib/types' to ensure a single source of truth. If these types
+// change, update them in 'lib/types.ts' only.
+import type {
+  ShopifyImage,
+  ShopifyVariant,
+  ShopifyProduct,
+  ShopifyCollection,
+} from '@/lib/types';
+
 // Read environment variables. In Vercel, set these under Settings → Environment Variables.
 const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
 const storefrontAccessToken = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN;
@@ -19,55 +28,7 @@ const API_URL = `https://${domain}/api/${API_VERSION}/graphql.json`;
 // =====================
 // Types for Shopify responses
 // =====================
-export type ShopifyImage = {
-  url: string;
-  altText?: string | null;
-};
-
-export type ShopifyVariant = {
-  id: string;
-  title: string;
-  priceV2: {
-    amount: string;
-    currencyCode: string;
-  };
-  availableForSale: boolean;
-};
-
-export type ShopifyProduct = {
-  id: string;
-  title: string;
-  handle: string;
-  description?: string | null;
-  descriptionHtml?: string | null;
-  productType?: string | null;
-  tags?: string[];
-  availableForSale: boolean;
-  priceRange: {
-    minVariantPrice: {
-      amount: string;
-      currencyCode: string;
-    };
-  };
-  images?: {
-    edges?: { node: ShopifyImage }[];
-  };
-  variants?: {
-    edges?: { node: ShopifyVariant }[];
-  };
-};
-
-export type ShopifyCollection = {
-  id: string;
-  title: string;
-  handle: string;
-  description?: string | null;
-  image?: ShopifyImage;
-  products?: {
-    edges?: { node: ShopifyProduct }[];
-  };
-};
-
+// Import the shared types from '@/lib/types' to ensure a single source of truth. If these types
 // =====================
 // Internal fetch helper
 // =====================
